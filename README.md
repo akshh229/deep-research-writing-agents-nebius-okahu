@@ -1,5 +1,11 @@
 # Deep Research + Writing Agents Workshop with Nebius and Okahu
 
+> **Submitted by:** Akshat Raj
+> **Institution:** Chandigarh University
+> **Course:** B.E. Computer Science & Engineering (CSE)
+>
+> Built on and adapted from the open-source workshop credited in [References](#references). See [What I Did](#what-i-did) for my contribution.
+
 A hands-on workshop for building a practical AI agent system with two MCP servers: a **Deep Research Agent** and a **LinkedIn Writing Workflow**. The current implementation uses **Nebius AI Studio** for text LLM calls, **Exa** for real-time research, **Gemini** for image generation, and **Okahu Cloud + Monocle** for observability and eval traces.
 
 The system can be run directly, connected to an MCP-compatible harness such as Claude Code or Cursor, or rebuilt from scratch through the `implement_yourself/` track.
@@ -14,7 +20,7 @@ Three ways to use this repo. Pick the mode that fits the time you have. Or work 
 
    > **No cheating, by design.** `implement_yourself/` is a self-contained project. Open your harness (Claude Code, Cursor, …) **directly in that folder** (not at the repo root) so its working directory is scoped to the skeleton. The agents can't see the reference implementation in `../src/`, can't grep it, can't read its files. You get a real build, not a copy-paste.
 
-## What You'll Build Today
+## What I have Build Today
 
 **Deep Research Agent** — An MCP server that runs deep research using Exa for real-time search, Nebius for LLM reasoning, and public captions for YouTube analysis:
 
@@ -273,6 +279,18 @@ What's the most complex system you've encountered recently?
 
 > Browse more full examples (seed, research, post drafts, reviews, final post + image) in the [`examples/`](examples/) directory.
 
+## What I Did
+
+This project implements a hybrid AI system — a **Deep Research Agent** and a **LinkedIn Writing Workflow**, both served as MCP servers and driven through an AI harness. Work done for this submission:
+
+- **System setup & runs** — configured the environment (Nebius, Exa, Gemini, Okahu keys), installed dependencies with `uv`, and ran the full research → write → image → evaluate pipeline end-to-end.
+- **Architecture study** — worked through the two-server design: the tool-use research agent (Exa search + YouTube transcript analysis + compile step) and the writing workflow's evaluator-optimizer loop (generate → review → edit × N).
+- **MCP integration** — connected both servers (`deep-research`, `linkedin-writer`) to the harness via `.mcp.json` and exercised their tools, resources, and prompts.
+- **Evaluation** — ran the local LLM-as-judge pipeline, scoring generated posts against expert labels (F1) with Monocle/Okahu tracing.
+- **Concepts demonstrated** — tool-use agents, evaluator-optimizer loops, grounded search with citations, structured LLM output via Pydantic, FastMCP server design, and LLM-as-judge evaluation.
+
+> Original framework and reference implementation are credited under [References](#references).
+
 ## Tech Stack
 
 
@@ -474,8 +492,12 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 Copyright (c) 2026 Paul Iusztin, Towards AI Inc
 
-## Attribution
+## References
 
-This repository was forked and adapted from the original [designing-real-world-ai-agents-workshop](https://github.com/iusztinpaul/designing-real-world-ai-agents-workshop) by Paul Iusztin and the original workshop contributors Louis-François Bouchard, Paul Iusztin, and Samridhi Vaid.
+This project is built on and adapted from prior open-source work. Full credit to the original authors:
 
-This fork updates the workshop implementation to use Nebius AI Studio for text LLMs, Exa for real-time search, Gemini for image generation, and Okahu Cloud + Monocle for observability and eval traces.
+- **Original workshop:** [designing-real-world-ai-agents-workshop](https://github.com/iusztinpaul/designing-real-world-ai-agents-workshop) by Paul Iusztin.
+- **Original contributors:** Louis-François Bouchard, Paul Iusztin, and Samridhi Vaid.
+- **Copyright:** © 2026 Paul Iusztin, Towards AI Inc — licensed under MIT (see [LICENSE](LICENSE)).
+
+The implementation uses Nebius AI Studio for text LLMs, Exa for real-time search, Gemini for image generation, and Okahu Cloud + Monocle for observability and eval traces.

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Deep Research &amp; Writing Agents — Akshat Raj</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#555; --line:#d0d0d0; --accent:#2b4c7e; --code-bg:#f4f5f7; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    color: var(--ink); line-height: 1.55; font-size: 11pt;
+    max-width: 760px; margin: 0 auto; padding: 40px 32px;
+  }
+  h1 { font-size: 22pt; color: var(--accent); margin: 0 0 4px; line-height: 1.15; }
+  h2 { font-size: 15pt; color: var(--accent); margin: 26px 0 8px;
+       border-bottom: 2px solid var(--line); padding-bottom: 4px; }
+  h3 { font-size: 12.5pt; margin: 18px 0 6px; color: #333; }
+  p { margin: 8px 0; }
+  a { color: var(--accent); text-decoration: none; }
+  strong { color: #111; }
+  ul { margin: 8px 0 8px 4px; padding-left: 20px; }
+  li { margin: 4px 0; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px;
+         font-family: "Cascadia Code", Consolas, monospace; font-size: 9.5pt; }
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px;
+        padding: 12px 14px; overflow-x: auto; font-size: 9pt; line-height: 1.4; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 10pt; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eef2f7; color: #223; }
+  blockquote { border-left: 3px solid var(--accent); margin: 12px 0; padding: 4px 14px;
+               color: var(--muted); background: #fafbfc; }
+  .cover { min-height: 88vh; display: flex; flex-direction: column; justify-content: center; }
+  .cover .sub { font-size: 13pt; color: var(--muted); margin: 0 0 24px; font-weight: 600; }
+  .meta { margin: 20px 0; font-size: 12pt; }
+  .meta div { margin: 6px 0; }
+  .meta .label { color: var(--muted); display: inline-block; width: 130px; }
+  .footnote { font-size: 9.5pt; color: var(--muted); font-style: italic; }
+  .page-break { page-break-before: always; }
+  @media print { body { padding: 0 12mm; } .no-print { display: none; } }
+  .hint { background:#fff8e1; border:1px solid #f0d98a; border-radius:6px; padding:10px 14px;
+          font-size:10pt; margin-bottom:24px; }
+  .diagram { font-family:"Cascadia Code",Consolas,monospace; font-size:8.5pt; }
+</style>
+</head>
+<body>
+
+<div class="hint no-print">
+  <strong>To save as PDF:</strong> press <strong>Ctrl+P</strong> (or Cmd+P) →
+  Destination <strong>Save as PDF</strong> → set Margins to <em>Default</em>,
+  enable <em>Background graphics</em> → Save. This box won't appear in the PDF.
+</div>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <h1>Deep Research &amp; Writing Agents</h1>
+  <p class="sub">A Hybrid AI System of Two Cooperating MCP Agents</p>
+
+  <div class="meta">
+    <div><span class="label">Submitted by</span><strong>Akshat Raj</strong></div>
+    <div><span class="label">Institution</span>Chandigarh University</div>
+    <div><span class="label">Course</span>B.E. Computer Science &amp; Engineering (CSE)</div>
+  </div>
+
+  <hr/>
+
+  <h3>Summary</h3>
+  <p>A hybrid AI system built from two cooperating agents, each served as a
+  <strong>Model Context Protocol (MCP)</strong> server: a <strong>Deep Research
+  Agent</strong> that gathers real-time, source-cited information using live web
+  search (Exa) and YouTube transcript analysis, and a <strong>LinkedIn Writing
+  Workflow</strong> that turns that research into a polished, on-brand post
+  through an <strong>evaluator–optimizer loop</strong> (generate → review → edit)
+  and produces a matching AI-generated image. Output quality is measured
+  automatically with an <strong>LLM-as-judge</strong> pipeline (F1 against expert
+  labels) and traced end-to-end via Monocle / Okahu.</p>
+
+  <h3>Key Concepts</h3>
+  <p>Tool-use agents · Evaluator–optimizer loop · Grounded search with citations ·
+  Structured LLM output (Pydantic) · MCP server design · LLM-as-judge evaluation</p>
+
+  <h3>Tech Stack</h3>
+  <p>Nebius AI Studio · FastMCP · Exa · Gemini · Pydantic · Okahu + Monocle · uv · Ruff</p>
+
+  <p class="footnote">Built on and adapted from prior open-source work — credited
+  in the References section.</p>
+</section>
+
+<!-- ============ REPORT ============ -->
+<div class="page-break"></div>
+
+<h1>Project Report</h1>
+<blockquote>This report explains the AI system in my own words: what it does, how
+it is built, and the engineering ideas behind it. The project is built on and
+adapted from prior open-source work, credited in the References section and the
+repository README.</blockquote>
+
+<h2>1. Abstract</h2>
+<p>This project is a hybrid AI system made of two cooperating agents, each exposed
+as a <strong>Model Context Protocol (MCP)</strong> server:</p>
+<ul>
+  <li>A <strong>Deep Research Agent</strong> that gathers real-time, cited information on a topic.</li>
+  <li>A <strong>LinkedIn Writing Workflow</strong> that turns that research into a polished,
+      publish-ready social post plus a matching AI-generated image.</li>
+</ul>
+<p>Both servers plug into an AI harness (Claude Code or Cursor), which acts as the
+orchestrator. The system demonstrates several core patterns of modern AI
+engineering — tool-use agents, an evaluator–optimizer refinement loop, grounded
+search with citations, structured model output, and automated LLM-as-judge
+evaluation with tracing.</p>
+
+<h2>2. Problem Statement</h2>
+<p>Large Language Models (LLMs) on their own have two well-known weaknesses:</p>
+<ul>
+  <li><strong>They hallucinate</strong> — confident but false facts, because they answer
+      from memory instead of current, verifiable sources.</li>
+  <li><strong>They produce uneven first drafts</strong> — a single-shot generation is rarely
+      as tight or on-brand as writing that has been reviewed and revised.</li>
+</ul>
+<p>The goal is to wrap an LLM in an <strong>engineered system</strong> (a "harness")
+that fixes both: ground every claim in real search results, improve the writing
+through repeated automated review, then measure the final quality objectively.</p>
+
+<h2>3. System Architecture</h2>
+<p>The system follows a two-server design. The harness calls tools on each server
+in sequence.</p>
+<pre class="diagram">user topic
+   |
+   v
++-----------------------------+        +-----------------------------+
+|   Deep Research Agent        |        |   LinkedIn Writing Workflow  |
+|   (MCP server)               |        |   (MCP server)               |
+|                              |        |                              |
+|  deep_research  --+          |        |  generate_post --+           |
+|  analyze_youtube  |          | research.md              |           |
+|  compile_research +----------+------> |  edit_post  &lt;----+ (loop)    |
+|                              |        |  generate_image              |
++-----------------------------+        +-----------------------------+
+                                                     |
+                                                     v
+                                          post.md + post_image.png</pre>
+
+<h3>3.1 Why MCP?</h3>
+<p>Instead of hard-wiring the two agents into one monolithic script, each is a
+standalone <strong>MCP server</strong> that publishes its capabilities as
+<strong>tools</strong>, <strong>resources</strong>, and <strong>prompts</strong>.
+Any MCP-compatible harness can then discover and call them. This keeps the two
+concerns (researching vs. writing) decoupled and independently testable, and it
+is the same interface pattern used by production AI tools. The server bootstrap
+is small and uniform — <code>create_mcp_server()</code> builds a
+<code>FastMCP</code> instance and registers the tools, resources, and prompts.</p>
+
+<h2>4. Component 1 — Deep Research Agent</h2>
+<p>This is a <strong>tool-use agent</strong>: the LLM decides which tools to call
+and how many times, based on the topic.</p>
+<table>
+  <tr><th>Tool</th><th>Job</th></tr>
+  <tr><td><code>deep_research</code></td><td>Runs a real-time web search for one query and returns a cited answer.</td></tr>
+  <tr><td><code>analyze_youtube_video</code></td><td>Pulls a YouTube transcript and summarizes it (when the seed includes video links).</td></tr>
+  <tr><td><code>compile_research</code></td><td>Merges all findings into a single structured <code>research.md</code> with sources.</td></tr>
+</table>
+<h3>4.1 Grounded search</h3>
+<p>The core of grounding is <code>run_grounded_search()</code>. Each raw query is
+wrapped in a research prompt template, sent to the <strong>Exa</strong> search
+API, and the response — an answer plus its source citations — is parsed into
+typed <code>ResearchResult</code> and <code>ResearchSource</code> objects. Because
+every answer carries its source URLs, the research is verifiable rather than
+hallucinated.</p>
+<h3>4.2 Structured output</h3>
+<p>Search results are validated into <strong>Pydantic</strong> schemas, so the rest
+of the pipeline receives type-safe, predictable data — a key reliability technique
+that forces model output into a known shape.</p>
+
+<h2>5. Component 2 — LinkedIn Writing Workflow</h2>
+<p>This server converts <code>research.md</code> + a short guideline into a
+finished post. Its most important idea is the <strong>evaluator–optimizer loop</strong>.</p>
+<pre class="diagram">research.md + guideline
+        |
+        v
+   generate_post   -->  draft v0
+        |
+        v
+ +--------------------------+
+ |  review  -->  edit        |   x N cycles
+ +--------------------------+
+        |
+        v
+   final post --> generate_image</pre>
+<h3>5.1 Generate → Review → Edit</h3>
+<ul>
+  <li><strong>Generate</strong> — the writer model produces a first draft from the research and guideline.</li>
+  <li><strong>Review</strong> — a separate reviewer step (<code>review_post()</code>) grades the draft
+      against three shipped <strong>profiles</strong> — <em>structure</em>, <em>terminology</em>,
+      <em>character</em> — plus the guideline, and returns structured critiques. Optional
+      <strong>human feedback</strong> is given the highest priority.</li>
+  <li><strong>Edit</strong> — the critiques are fed back to rewrite the draft.</li>
+</ul>
+<p>Repeating this cycle tightens the hook, removes redundancy, and pulls the post
+on-brand — the same "draft, get feedback, revise" loop a human editor would run,
+automated. The README shows a real before/after: a verbose v0 becoming a punchy v3
+after three cycles.</p>
+<h3>5.2 Image generation</h3>
+<p>Once the text is final, <code>generate_image</code> calls <strong>Gemini's image
+model</strong> (<code>gemini-2.5-flash-image</code>) to produce a matching visual,
+giving a complete, ready-to-publish post.</p>
+
+<h2>6. Evaluation — LLM-as-Judge</h2>
+<p>A system that generates content also needs to <strong>measure</strong> quality
+without a human grading every output. This project uses an <strong>LLM-as-judge</strong>
+pipeline:</p>
+<ul>
+  <li>An LLM scores each generated post against quality criteria (structure, tone, accuracy).</li>
+  <li>Those scores are compared to expert labels, and an <strong>F1 score</strong> is computed
+      on dev and test splits of a labeled dataset.</li>
+</ul>
+<p>This turns "does this post look good?" into a repeatable, numeric benchmark.</p>
+<h3>6.1 Observability</h3>
+<p>Both servers optionally emit traces through <strong>Monocle</strong>, which can
+export to <strong>Okahu Cloud</strong>. This makes the whole run inspectable —
+every LLM call, tool call, judge score, and critique — so failures can be debugged
+and quality tracked over time. Tracing is wired in at server startup via
+<code>configure_okahu()</code> and is fully optional.</p>
+
+<h2>7. Technology Stack</h2>
+<table>
+  <tr><th>Concern</th><th>Technology</th></tr>
+  <tr><td>Text LLM calls</td><td>Nebius AI Studio (via LangChain)</td></tr>
+  <tr><td>MCP server framework</td><td>FastMCP</td></tr>
+  <tr><td>Real-time search</td><td>Exa</td></tr>
+  <tr><td>Image generation</td><td>Gemini <code>gemini-2.5-flash-image</code></td></tr>
+  <tr><td>Data validation / schemas</td><td>Pydantic + Pydantic Settings</td></tr>
+  <tr><td>Observability &amp; evals</td><td>Okahu Cloud + Monocle</td></tr>
+  <tr><td>Linting / formatting</td><td>Ruff</td></tr>
+  <tr><td>Packaging / environment</td><td>uv</td></tr>
+</table>
+
+<h2>8. AI Engineering Concepts Demonstrated</h2>
+<ul>
+  <li><strong>Tool-use agents</strong> — the model chooses which tools to call and when.</li>
+  <li><strong>Evaluator–optimizer loop</strong> — quality built through iterative review.</li>
+  <li><strong>Grounded search</strong> — every fact backed by a live-search citation.</li>
+  <li><strong>Structured LLM output</strong> — Pydantic schemas keep responses type-safe.</li>
+  <li><strong>MCP server design</strong> — capabilities exposed as tools, resources, prompts.</li>
+  <li><strong>LLM-as-judge evaluation</strong> — automated, numeric quality scoring with tracing.</li>
+</ul>
+
+<h2>9. How to Run</h2>
+<pre><code>cp .env.example .env      # add NEBIUS_API_KEY, EXA_API_KEY, GEMINI_API_KEY
+uv sync                   # install dependencies
+make test-end-to-end      # run research + writing pipeline end-to-end</code></pre>
+<p>Other entry points: MCP servers (<code>make run-research-server</code>,
+<code>make run-writing-server</code>), a Streamlit UI (<code>make run-ui</code>),
+and evaluation commands (<code>make eval-dev</code>, <code>make eval-test</code>).
+Full details are in the README.</p>
+
+<h2>10. Conclusion</h2>
+<p>This project shows that the value of an AI application comes less from the raw
+model and more from the <strong>system built around it</strong> — grounding,
+iterative refinement, structure, and measurement. By combining a grounded research
+agent with an evaluator–optimizer writing workflow, both served over MCP and traced
+for observability, the system reliably turns a bare topic into a verifiable,
+polished, publishable result.</p>
+
+<h2>References</h2>
+<p>This project is built on and adapted from prior open-source work. Full credit to
+the original authors:</p>
+<ul>
+  <li><strong>Original workshop:</strong> <em>designing-real-world-ai-agents-workshop</em>
+      by Paul Iusztin —
+      <a href="https://github.com/iusztinpaul/designing-real-world-ai-agents-workshop">github.com/iusztinpaul/designing-real-world-ai-agents-workshop</a></li>
+  <li><strong>Original contributors:</strong> Louis-François Bouchard, Paul Iusztin, Samridhi Vaid.</li>
+  <li><strong>License / copyright:</strong> © 2026 Paul Iusztin, Towards AI Inc — MIT License (see <code>LICENSE</code>).</li>
+</ul>
+
+</body>
+</html>
