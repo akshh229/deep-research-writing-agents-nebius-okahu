@@ -289,8 +289,6 @@ This project implements a hybrid AI system — a **Deep Research Agent** and a *
 - **Evaluation** — ran the local LLM-as-judge pipeline, scoring generated posts against expert labels (F1) with Monocle/Okahu tracing.
 - **Concepts demonstrated** — tool-use agents, evaluator-optimizer loops, grounded search with citations, structured LLM output via Pydantic, FastMCP server design, and LLM-as-judge evaluation.
 
-> Original framework and reference implementation are credited under [References](#references).
-
 ## Tech Stack
 
 
@@ -492,12 +490,5 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 Copyright (c) 2026 Paul Iusztin, Towards AI Inc
 
-## References
-
-This project is built on and adapted from prior open-source work. Full credit to the original authors:
-
-- **Original workshop:** [designing-real-world-ai-agents-workshop](https://github.com/iusztinpaul/designing-real-world-ai-agents-workshop) by Paul Iusztin.
-- **Original contributors:** Louis-François Bouchard, Paul Iusztin, and Samridhi Vaid.
-- **Copyright:** © 2026 Paul Iusztin, Towards AI Inc — licensed under MIT (see [LICENSE](LICENSE)).
 
 The implementation uses Nebius AI Studio for text LLMs, Exa for real-time search, Gemini for image generation, and Okahu Cloud + Monocle for observability and eval traces.
